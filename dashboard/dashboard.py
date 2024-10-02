@@ -8,7 +8,7 @@ import os
 st.title('Dashboard Bike Sharing')
 
 # Bagian 1: Memuat data
-data_path = 'analisis_data/data/day.csv'  # Path ke dataset yang sudah diperbarui
+data_path = 'data/day.csv'  # Path ke dataset yang sudah diperbarui
 
 # Cek apakah file ada
 if os.path.exists(data_path):

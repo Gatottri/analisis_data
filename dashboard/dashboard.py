@@ -2,47 +2,61 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import os
 
-# Judul aplikasi
-st.title('Dashboard Bike Sharing')
+# Judul dan pengenalan
+st.title("Analisis Data Penyewaan Sepeda")
+st.markdown('''
+## Proyek Analisis Data: Dataset Penyewaan Sepeda
+**Nama:** Gatot Triantono  
+**Email:** gatottriantono2003@gmail.com  
+**ID Dicoding:** gatot_triantono  
+''')
 
-# Bagian 1: Memuat data
-data_path = 'data/day.csv'  # Path ke dataset yang sudah diperbarui
+# Bagian: Memuat data
+st.header("Muat dan Eksplorasi Dataset")
 
-# Cek apakah file ada
-if os.path.exists(data_path):
+# Path ke dataset
+data_path = 'data/day.csv'
+
+try:
+    # Memuat data ke dalam dataframe
     df = pd.read_csv(data_path)
+    st.write("Pratinjau Data:")
+    st.dataframe(df.head())
 
-    # Memeriksa kolom yang ada
-    if 'workingday' not in df.columns or 'cnt' not in df.columns or 'dteday' not in df.columns:
-        st.write("Kolom yang diperlukan tidak ada dalam dataset.")
-    else:
-        # Bagian 2: Visualisasi penggunaan sepeda antara hari kerja dan hari libur
-        st.subheader('Perbandingan Penggunaan Sepeda: Hari Kerja vs Hari Libur')
-        weekday_usage = df.groupby('workingday')['cnt'].mean()
+    # Menampilkan statistik ringkas
+    st.write("Ringkasan Data:")
+    st.write(df.describe())
 
+    # Bagian: Visualisasi
+    st.header("Visualisasi")
+
+    # Penggunaan sepeda pada hari kerja vs hari libur
+    st.subheader("Penggunaan Sepeda: Hari Kerja vs Hari Libur")
+    if 'holiday' in df.columns and 'count' in df.columns:
         fig, ax = plt.subplots()
-        ax.bar(['Hari Kerja', 'Hari Libur'], weekday_usage)
-        ax.set_ylabel('Rata-rata Jumlah Pengguna')
-        ax.set_title('Penggunaan Sepeda Berdasarkan Hari')
+        sns.barplot(x='holiday', y='count', data=df, ax=ax)
+        ax.set_title("Perbandingan Penggunaan Sepeda: Hari Kerja vs Hari Libur")
         st.pyplot(fig)
 
-        # Bagian 3: Tren Penggunaan Sepeda dari Tahun ke Tahun
-        st.subheader('Tren Penggunaan Sepeda dari Tahun ke Tahun')
-        df['year'] = pd.to_datetime(df['dteday']).dt.year
-        yearly_usage = df.groupby('year')['cnt'].sum()
+    # Tren tahunan penggunaan sepeda
+    st.subheader("Tren Penggunaan Sepeda Tahunan")
+    if 'year' in df.columns and 'count' in df.columns:
+        fig, ax = plt.subplots()
+        sns.lineplot(x='year', y='count', data=df, ax=ax)
+        ax.set_title("Tren Penggunaan Sepeda Tahunan")
+        st.pyplot(fig)
 
-        fig2, ax2 = plt.subplots()
-        ax2.plot(yearly_usage.index, yearly_usage.values)
-        ax2.set_ylabel('Jumlah Pengguna')
-        ax2.set_title('Tren Penggunaan Sepeda per Tahun')
-        st.pyplot(fig2)
+    # Filter kustom untuk pengguna
+    st.subheader("Visualisasi dengan Filter Kustom")
+    if 'season' in df.columns and 'count' in df.columns:
+        season_filter = st.selectbox("Pilih Musim", options=df['season'].unique())
+        filtered_data = df[df['season'] == season_filter]
 
-        # Bagian 4: Memilih tahun untuk analisis lebih lanjut
-        selected_year = st.selectbox('Pilih tahun untuk analisis:', yearly_usage.index)
-        yearly_data = df[df['year'] == selected_year]
-        st.write(f"Data untuk tahun {selected_year}:")
-        st.write(yearly_data[['dteday', 'cnt']])
-else:
-    st.write(f'File tidak ditemukan di {data_path}')
+        fig, ax = plt.subplots()
+        sns.lineplot(x='year', y='count', data=filtered_data, ax=ax)
+        ax.set_title(f"Tren Penggunaan Sepeda untuk Musim: {season_filter}")
+        st.pyplot(fig)
+
+except FileNotFoundError:
+    st.error(f"File {data_path} tidak ditemukan. Pastikan file tersebut ada di direktori yang benar.")

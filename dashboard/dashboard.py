@@ -43,12 +43,14 @@ if os.path.exists(data_path):
 
         # Bagian 4: Jumlah Total Pengguna Sepeda Berdasarkan Status Hari
         st.subheader('Jumlah Total Pengguna Sepeda Berdasarkan Status Hari (Hari Kerja vs Hari Libur)')
-        total_usage_by_day = df.groupby('workingday')['cnt'].sum()
+        total_usage_by_day_type = df.groupby('holiday')['cnt'].sum().reset_index()
 
-        fig, ax = plt.subplots()
-        ax.bar(['Hari Kerja', 'Hari Libur'], total_usage_by_day, color=['blue', 'green'])
-        ax.set_ylabel('Total Pengguna')
+        fig, ax = plt.subplots(figsize=(8, 5))
+        sns.barplot(x='holiday', y='cnt', data=total_usage_by_day_type, palette='muted', ax=ax)
         ax.set_title('Jumlah Total Pengguna Sepeda Berdasarkan Status Hari')
+        ax.set_xticklabels(['Hari Kerja', 'Hari Libur'], rotation=45)
+        ax.set_ylabel('Jumlah Total Pengguna Sepeda')
+        ax.set_xlabel('Status Hari')
         st.pyplot(fig)
 
         # Bagian 5: Tren Penggunaan Sepeda dari Tahun ke Tahun

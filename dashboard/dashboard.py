@@ -64,7 +64,7 @@ if os.path.exists(data_path):
 
         # Bagian 6: Total Pengguna Sepeda per Tahun
         df['year'] = pd.to_datetime(df['dteday']).dt.year
-        
+
         st.subheader('Total Pengguna Sepeda per Tahun')
         total_users_per_year = df.groupby('year')['cnt'].sum().reset_index()
 
@@ -87,11 +87,5 @@ if os.path.exists(data_path):
         ax2.set_xlabel('Tahun')
         ax2.grid()
         st.pyplot(fig2)
-
-        # Bagian 8: Memilih tahun untuk analisis lebih lanjut
-        selected_year = st.selectbox('Pilih tahun untuk analisis:', yearly_usage.index)
-        yearly_data = df[df['year'] == selected_year]
-        st.write(f"Data untuk tahun {selected_year}:")
-        st.write(yearly_data[['dteday', 'cnt']])
 else:
     st.write(f'File tidak ditemukan di {data_path}')

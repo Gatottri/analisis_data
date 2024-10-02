@@ -79,11 +79,12 @@ if os.path.exists(data_path):
         # Bagian 7: Perubahan Pengguna Sepeda per Tahun
         st.subheader('Perubahan Pengguna Sepeda per Tahun')
         total_users_per_year['change'] = total_users_per_year['cnt'].diff()
+        total_users_per_year['change'].fillna(0, inplace=True)
 
         fig2, ax2 = plt.subplots(figsize=(10, 6))
         sns.lineplot(x='year', y='change', data=total_users_per_year, marker='o', color='orange', ax=ax2)
         ax2.set_title('Perubahan Pengguna Sepeda per Tahun')
-        ax2.set_ylabel('Perubahan Jumlah Pengguna (%)')
+        ax2.set_ylabel('Perubahan Jumlah Pengguna')
         ax2.set_xlabel('Tahun')
         ax2.grid()
         st.pyplot(fig2)

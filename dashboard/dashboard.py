@@ -63,22 +63,30 @@ if os.path.exists(data_path):
         st.pyplot(fig)
 
         # Bagian 6: Total Pengguna Sepeda per Tahun
+        df['year'] = pd.to_datetime(df['dteday']).dt.year
+        
         st.subheader('Total Pengguna Sepeda per Tahun')
-        fig, ax = plt.subplots()
-        sns.barplot(x=yearly_usage.index, y=yearly_usage.values, ax=ax)
-        ax.set_ylabel('Total Pengguna')
+        total_users_per_year = df.groupby('year')['cnt'].sum().reset_index()
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.barplot(x='year', y='cnt', data=total_users_per_year, palette='viridis', ax=ax)
         ax.set_title('Total Pengguna Sepeda per Tahun')
+        ax.set_ylabel('Jumlah Total Pengguna Sepeda')
+        ax.set_xlabel('Tahun')
+        ax.grid(axis='y')
         st.pyplot(fig)
 
         # Bagian 7: Perubahan Pengguna Sepeda per Tahun
         st.subheader('Perubahan Pengguna Sepeda per Tahun')
-        yearly_change = yearly_usage.pct_change() * 100
+        total_users_per_year['change'] = total_users_per_year['cnt'].pct_change() * 100
 
-        fig, ax = plt.subplots()
-        ax.bar(yearly_change.index, yearly_change.values, color='purple')
-        ax.set_ylabel('Perubahan Pengguna (%)')
-        ax.set_title('Perubahan Pengguna Sepeda per Tahun')
-        st.pyplot(fig)
+        fig2, ax2 = plt.subplots(figsize=(10, 6))
+        sns.lineplot(x='year', y='change', data=total_users_per_year, marker='o', color='orange', ax=ax2)
+        ax2.set_title('Perubahan Pengguna Sepeda per Tahun')
+        ax2.set_ylabel('Perubahan Jumlah Pengguna (%)')
+        ax2.set_xlabel('Tahun')
+        ax2.grid()
+        st.pyplot(fig2)
 
         # Bagian 8: Memilih tahun untuk analisis lebih lanjut
         selected_year = st.selectbox('Pilih tahun untuk analisis:', yearly_usage.index)

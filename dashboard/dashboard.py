@@ -52,14 +52,17 @@ if os.path.exists(data_path):
         st.pyplot(fig)
 
         # Bagian 5: Tren Penggunaan Sepeda dari Tahun ke Tahun
-        st.subheader('Tren Penggunaan Sepeda dari Tahun ke Tahun')
         df['year'] = pd.to_datetime(df['dteday']).dt.year
-        yearly_usage = df.groupby('year')['cnt'].sum()
+        st.subheader('Rata-rata Pengguna Sepeda per Tahun')
+        yearly_trend = df.groupby('year')['cnt'].mean().reset_index()
 
-        fig, ax = plt.subplots()
-        ax.plot(yearly_usage.index, yearly_usage.values, marker='o')
-        ax.set_ylabel('Jumlah Pengguna')
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.lineplot(x='year', y='cnt', data=yearly_trend, marker='o', ax=ax)
         ax.set_title('Tren Penggunaan Sepeda dari Tahun ke Tahun')
+        ax.set_ylabel('Rata-rata Jumlah Pengguna Sepeda')
+        ax.set_xlabel('Tahun')
+        ax.grid()
+        plt.xticks(yearly_trend['year'], rotation=45)  # Putar label tahun agar lebih mudah dibaca
         st.pyplot(fig)
 
         # Bagian 6: Total Pengguna Sepeda per Tahun

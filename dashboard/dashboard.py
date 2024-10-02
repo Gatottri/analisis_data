@@ -13,11 +13,6 @@ data_path = 'data/day.csv'  # Path ke dataset yang sudah diperbarui
 # Cek apakah file ada
 if os.path.exists(data_path):
     df = pd.read_csv(data_path)
-    st.write("Pratinjau Data:")
-    st.dataframe(df.head())
-
-    st.write("Ringkasan Data:")
-    st.write(df.describe())
 
     # Memeriksa kolom yang ada
     if 'workingday' not in df.columns or 'cnt' not in df.columns or 'dteday' not in df.columns:
@@ -33,12 +28,14 @@ if os.path.exists(data_path):
 
         # Bagian 3: Rata-rata Penggunaan Sepeda Berdasarkan Status Hari
         st.subheader('Rata-rata Penggunaan Sepeda Berdasarkan Status Hari (Hari Kerja vs Hari Libur)')
-        avg_usage_by_day = df.groupby('workingday')['cnt'].mean()
+        usage_by_day_type = df.groupby('holiday')['cnt'].mean().reset_index()
 
-        fig, ax = plt.subplots()
-        ax.bar(['Hari Kerja', 'Hari Libur'], avg_usage_by_day)
-        ax.set_ylabel('Rata-rata Pengguna')
+        fig, ax = plt.subplots(figsize=(8, 5))
+        sns.barplot(x='holiday', y='cnt', data=usage_by_day_type, palette='muted', ax=ax)
         ax.set_title('Rata-rata Penggunaan Sepeda Berdasarkan Status Hari')
+        ax.set_xticklabels(['Hari Kerja', 'Hari Libur'], rotation=45)
+        ax.set_ylabel('Rata-rata Jumlah Pengguna Sepeda')
+        ax.set_xlabel('Status Hari')
         st.pyplot(fig)
 
         # Bagian 4: Jumlah Total Pengguna Sepeda Berdasarkan Status Hari
